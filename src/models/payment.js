@@ -2,7 +2,11 @@ module.exports = (sequelize, DataTypes) => {
   const Payment = sequelize.define(
     "Payment",
     {
-      status: DataTypes.STRING,
+      status: {
+        type: DataTypes.ENUM("PENDING", "SUCCESS", "CANCELLED"),
+        allowNull: false,
+        dafaultValue: "PENDING",
+      },
       picture: DataTypes.STRING,
     },
     {

@@ -5,14 +5,25 @@ module.exports = (sequelize, DataTypes) => {
       firstName: {
         type: DataTypes.STRING,
         allowNull: false,
+        validate: {
+          notEmpty: true,
+        },
       },
       lastName: {
         type: DataTypes.STRING,
         allowNull: false,
+        validate: {
+          notEmpty: true,
+        },
       },
       idCardNumber: {
         type: DataTypes.INTEGER,
         allowNull: false,
+        validate: {
+          max: {
+            arg: [13],
+          },
+        },
       },
       email: {
         type: DataTypes.STRING,
@@ -31,6 +42,11 @@ module.exports = (sequelize, DataTypes) => {
       password: {
         type: DataTypes.STRING,
         allowNull: false,
+        validate: {
+          min: {
+            arg: [6],
+          },
+        },
       },
     },
     {
