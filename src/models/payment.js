@@ -15,9 +15,9 @@ module.exports = (sequelize, DataTypes) => {
   );
 
   Payment.associate = (db) => {
-    Payment.hasOne(db.Booking, {
+    Payment.belongsTo(db.Booking, {
       foreignKey: {
-        name: "paymentId",
+        name: "bookingId",
         allowNull: false,
       },
       onDelete: "RESTRICT",

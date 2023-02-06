@@ -17,12 +17,10 @@ module.exports = (sequelize, DataTypes) => {
         },
       },
       idCardNumber: {
-        type: DataTypes.INTEGER,
+        type: DataTypes.STRING,
         allowNull: false,
         validate: {
-          max: {
-            arg: [13],
-          },
+          notEmpty: true,
         },
       },
       email: {

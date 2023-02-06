@@ -2,6 +2,10 @@ module.exports = (sequelize, DataTypes) => {
   const Venue = sequelize.define(
     "Venue",
     {
+      name: {
+        type: DataTypes.STRING,
+        allowNull: false,
+      },
       availableSeat: {
         type: DataTypes.INTEGER,
         allowNull: false,

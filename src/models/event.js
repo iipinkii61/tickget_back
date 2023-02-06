@@ -2,12 +2,12 @@ module.exports = (sequelize, DataTypes) => {
   const Event = sequelize.define(
     "Event",
     {
-      eventName: {
+      name: {
         type: DataTypes.STRING,
         allowNull: false,
       },
       dateTime: {
-        type: DataTypes.DATE,
+        type: DataTypes.STRING,
         allowNull: false,
       },
       status: {
