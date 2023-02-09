@@ -1,4 +1,4 @@
-// const cloudinary = require("../config/cloudinary");
+const cloudinary = require("../config/cloudinary");
 
 // exports.upload = async (filePath, publicId) => {
 //   const option = {

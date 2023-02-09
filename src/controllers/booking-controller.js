@@ -23,58 +23,58 @@ exports.createBooking = async (req, res, next) => {
   }
 };
 
-// exports.getAllPostIncludeFriend = async (req, res, next) => {
-//   try {
-//     // SELECT * from post where user_id = req.user.id (เอาแค่ post ตัวเอง) OR user_id = friendId1 OR...
-//     // SELECT * from post WHERE user_id IN (req.user.id, friendId1, ...)
-//     const friends = await Friend.findAll({
-//       where: {
-//         status: FRIEND_ACCEPTED,
-//         [Op.or]: [{ requesterId: req.user.id }, { accepterId: req.user.id }],
-//       },
-//     });
+exports.getAllBooking = async (req, res, next) => {
+  try {
+    // SELECT * from post where user_id = req.user.id (เอาแค่ post ตัวเอง) OR user_id = friendId1 OR...
+    // SELECT * from post WHERE user_id IN (req.user.id, friendId1, ...)
+    const friends = await Friend.findAll({
+      where: {
+        status: FRIEND_ACCEPTED,
+        [Op.or]: [{ requesterId: req.user.id }, { accepterId: req.user.id }],
+      },
+    });
 
-//     const friendIds = friends.map((el) =>
-//       el.requesterId === req.user.id ? el.accepterId : el.requesterId
-//     );
+    const friendIds = friends.map((el) =>
+      el.requesterId === req.user.id ? el.accepterId : el.requesterId
+    );
 
-//     const posts = await Post.findAll({
-//       where: {
-//         userId: [req.user.id, ...friendIds],
-//       },
-//       order: [["updatedAt", "DESC"]],
-//       include: [
-//         {
-//           model: User,
-//           attributes: {
-//             exclude: ["password"],
-//           },
-//         },
-//         {
-//           model: Like,
-//           include: {
-//             model: User,
-//             attributes: {
-//               exclude: ["password"],
-//             },
-//           },
-//         },
-//         {
-//           model: Comment,
-//           include: {
-//             model: User,
-//             attributes: {
-//               exclude: ["password"],
-//             },
-//           },
-//         },
-//       ],
-//     });
-//     res.status(200).json({ posts });
-//   } catch (err) {
-//     next(err);
-//   }
-// };
+    const posts = await Post.findAll({
+      where: {
+        userId: [req.user.id, ...friendIds],
+      },
+      order: [["updatedAt", "DESC"]],
+      include: [
+        {
+          model: User,
+          attributes: {
+            exclude: ["password"],
+          },
+        },
+        {
+          model: Like,
+          include: {
+            model: User,
+            attributes: {
+              exclude: ["password"],
+            },
+          },
+        },
+        {
+          model: Comment,
+          include: {
+            model: User,
+            attributes: {
+              exclude: ["password"],
+            },
+          },
+        },
+      ],
+    });
+    res.status(200).json({ posts });
+  } catch (err) {
+    next(err);
+  }
+};
 
 // exports.deletePost = async (req, res, next) => {
 //   try {
