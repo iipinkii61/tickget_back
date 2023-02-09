@@ -6,10 +6,6 @@ module.exports = (sequelize, DataTypes) => {
         type: DataTypes.STRING,
         allowNull: false,
       },
-      availableSeat: {
-        type: DataTypes.INTEGER,
-        allowNull: false,
-      },
     },
     { underscored: true }
   );
