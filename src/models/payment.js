@@ -5,7 +5,7 @@ module.exports = (sequelize, DataTypes) => {
       status: {
         type: DataTypes.ENUM("PENDING", "SUCCESS", "CANCELLED"),
         allowNull: false,
-        dafaultValue: "PENDING",
+        defaultValue: "PENDING",
       },
       picture: DataTypes.STRING,
     },

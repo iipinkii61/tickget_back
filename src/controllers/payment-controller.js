@@ -1,34 +1,28 @@
 const { Payment } = require("../models");
+const cloudinary = require("../utils/cloudinary");
+const fs = require("fs");
 
-exports.createPayment = (req, res, next) => {
+exports.updatePayment = async (req, res, next) => {
   try {
-    res.status(200).json();
+    const value = { picture: req.file?.path };
+
+    if (value) {
+      value.picture = await cloudinary.upload(value.picture);
+    }
+
+    value.bookingId = req.params.bookingId; // เพิ่ม key ที่เป็น userId ไปในตัวแปร value ด้วย
+
+    const payment = await Payment.update(value, {
+      where: { bookingId: req.params.bookingId },
+    });
+    // value = { picture, bookingId }
+
+    res.status(201).json({ payment });
   } catch (err) {
     next(err);
+  } finally {
+    if (req.file) {
+      fs.unlinkSync(req.file.path);
+    }
   }
 };
-
-// exports.createPayment = async (req, res, next) => {
-//   try {
-//     const value = validateCreatePost({
-//       title: req.body.title,
-//       image: req.file?.path,
-//     });
-
-//     if (value.image) {
-//       value.image = await cloudinary.upload(value.image);
-//     }
-
-//     value.userId = req.user.id; // เพิ่ม key ที่เป็น userId ไปในตัวแปร value ด้วย
-
-//     const post = await Post.create(value);
-
-//     res.status(201).json({ post });
-//   } catch (err) {
-//     next(err);
-//   } finally {
-//     if (req.file) {
-//       fs.unlinkSync(req.file.path);
-//     }
-//   }
-// };

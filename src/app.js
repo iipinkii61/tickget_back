@@ -9,7 +9,7 @@ const addRoute = require("./routes/addData-route");
 const bookingRoute = require("./routes/booking-route");
 const paymentRoute = require("./routes/payment-route");
 const getDataRoute = require("./routes/getData-route");
-const { sequelize } = require("./models");
+const { Booking, Zone, Payment } = require("./models");
 
 const app = express();
 
@@ -25,6 +25,7 @@ app.use("/payment", authenticateMiddliware, paymentRoute);
 app.use(notFoundMiddleware);
 app.use(errorMiddleware);
 
-// sequelize.sync({ force: true });
+// Booking.sync({ force: true }).then(() => Zone.sync({ force: true }));
+// Payment.sync({ force: true });
 
 app.listen(8000, () => console.log("server running on port 8000"));

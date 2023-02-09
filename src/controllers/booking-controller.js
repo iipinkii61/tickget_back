@@ -1,14 +1,8 @@
-// const { validateCreatePost } = require("../validators/post-validator");
-// const cloudinary = require("../utils/cloudinary");
-// const { Post, Friend, User, Like, Comment } = require("../models");
-// const fs = require("fs");
-// const { FRIEND_ACCEPTED } = require("../config/constant");
-// const { Op } = require("sequelize");
-// const createError = require("../utils/create-error");
-
-const { Booking } = require("../models");
+const { Booking, Payment, Zone } = require("../models");
+const createError = require("../utils/create-error.js");
 
 exports.createBooking = async (req, res, next) => {
+  // *** create both booking and payment ***
   try {
     const value = req.body;
 
@@ -16,78 +10,73 @@ exports.createBooking = async (req, res, next) => {
     value.eventId = req.params.eventId;
 
     const booking = await Booking.create(value);
-
-    res.status(201).json({ booking });
-  } catch (err) {
-    next(err);
-  }
-};
-
-exports.getAllBooking = async (req, res, next) => {
-  try {
-    // SELECT * from post where user_id = req.user.id (เอาแค่ post ตัวเอง) OR user_id = friendId1 OR...
-    // SELECT * from post WHERE user_id IN (req.user.id, friendId1, ...)
-    const friends = await Friend.findAll({
-      where: {
-        status: FRIEND_ACCEPTED,
-        [Op.or]: [{ requesterId: req.user.id }, { accepterId: req.user.id }],
-      },
-    });
-
-    const friendIds = friends.map((el) =>
-      el.requesterId === req.user.id ? el.accepterId : el.requesterId
+    const payment = await Payment.create({ ["bookingId"]: booking.id });
+    const zone = await Zone.update(
+      { bookingId: booking.id },
+      {
+        where: { id: req.params.zoneId },
+      }
     );
+    // update booking id where zone id นั่นแหละ
 
-    const posts = await Post.findAll({
-      where: {
-        userId: [req.user.id, ...friendIds],
-      },
-      order: [["updatedAt", "DESC"]],
-      include: [
-        {
-          model: User,
-          attributes: {
-            exclude: ["password"],
-          },
-        },
-        {
-          model: Like,
-          include: {
-            model: User,
-            attributes: {
-              exclude: ["password"],
-            },
-          },
-        },
-        {
-          model: Comment,
-          include: {
-            model: User,
-            attributes: {
-              exclude: ["password"],
-            },
-          },
-        },
-      ],
-    });
-    res.status(200).json({ posts });
+    res.status(201).json({ booking, payment, zone });
   } catch (err) {
     next(err);
   }
 };
 
-// exports.deletePost = async (req, res, next) => {
-//   try {
-//     const post = await Post.findOne({ where: { id: req.params.postId } });
-//     if (!post) {
-//       createError("this post was not found", 400);
-//     }
-//     if (post.userId !== req.user.id) {
-//       createError("you have no permission to delete this post", 403);
-//     }
-//     await post.destroy();
-//     res.status(204).json();
-//   } catch (err) {
-//     next(err);
-//   }
-// };
+exports.getBooking = async (req, res, next) => {
+  try {
+    const booking = await Booking.findOne({
+      where: {
+        id: req.params.bookingId,
+      },
+    });
+    res.status(200).json({ booking });
+  } catch (err) {
+    next(err);
+  }
+};
+
+exports.getAllBookingById = async (req, res, next) => {
+  try {
+    const booking = await Booking.findAll({
+      where: {
+        userId: req.params.userId,
+      },
+    });
+    res.status(200).json({ booking });
+  } catch (err) {
+    next(err);
+  }
+};
+
+exports.deleteBooking = async (req, res, next) => {
+  try {
+    // update zone, delete payment, delete booking
+    const booking = await Booking.findOne({
+      where: { id: req.params.bookingId },
+    });
+    const payment = await Payment.findOne({
+      where: { bookingId: req.params.bookingId },
+    });
+
+    if (booking.userId !== req.user.id) {
+      createError("you have no permission to delete this booking", 403);
+    }
+    if (!booking) {
+      createError("this booking was not found", 400);
+    } else {
+      await Zone.update(
+        { bookingId: null },
+        { where: { bookingId: req.params.bookingId } }
+      );
+      await payment.destroy();
+      await booking.destroy();
+    }
+
+    res.status(204).json();
+  } catch (err) {
+    next(err);
+  }
+};

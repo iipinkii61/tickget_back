@@ -27,6 +27,13 @@ module.exports = (sequelize, DataTypes) => {
       },
       onDelete: "RESTRICT",
     });
+
+    Zone.belongsTo(db.Booking, {
+      foreignKey: {
+        name: "bookingId",
+      },
+      onDelete: "RESTRICT",
+    });
   };
 
   return Zone;

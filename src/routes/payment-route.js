@@ -4,6 +4,10 @@ const upload = require("../middlewares/upload");
 
 const router = express.Router();
 
-router.post("/", upload.single("picture"), paymentController.createPayment);
+router.patch(
+  "/:bookingId",
+  upload.single("picture"),
+  paymentController.updatePayment
+);
 
 module.exports = router;

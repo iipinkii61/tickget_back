@@ -39,6 +39,13 @@ module.exports = (sequelize, DataTypes) => {
       },
       onDelete: "RESTRICT",
     });
+
+    Booking.hasMany(db.Zone, {
+      foreignKey: {
+        name: "bookingId",
+      },
+      onDelete: "RESTRICT",
+    });
   };
   return Booking;
 };
