@@ -16,7 +16,7 @@ exports.updatePayment = async (req, res, next) => {
       where: { bookingId: req.params.bookingId },
     });
     // value = { picture, bookingId }
-
+    console.log(req.file);
     res.status(201).json({ payment });
   } catch (err) {
     next(err);
