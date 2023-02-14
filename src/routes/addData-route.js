@@ -4,6 +4,8 @@ const upload = require("../middlewares/upload");
 
 const router = express.Router();
 
+// เป็นส่วนของ admin (ทำหน้า ui ไม่ทันแล้วววววว)
+
 router.post("/venue", addDataController.createVenue);
 router.post("/zone/:venueId", addDataController.createZone);
 router.post(
@@ -11,6 +13,7 @@ router.post(
   upload.single("picture"),
   addDataController.createEvent
 );
-// router.patch("/event/:eventId", addDataController.uploadPicEvent);
+router.patch("/event/:eventId", addDataController.updateEventStatus);
+router.patch("/payment/:paymentId", addDataController.updatePaymentStatus);
 
 module.exports = router;

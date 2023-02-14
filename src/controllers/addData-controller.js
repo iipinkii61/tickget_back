@@ -2,7 +2,7 @@ const createError = require("../utils/create-error");
 const cloudinary = require("../utils/cloudinary");
 const fs = require("fs");
 
-const { Venue, Zone, Event } = require("../models");
+const { Venue, Zone, Event, Payment } = require("../models");
 
 exports.createVenue = async (req, res, next) => {
   try {
@@ -56,5 +56,55 @@ exports.createEvent = async (req, res, next) => {
     if (req.file) {
       fs.unlinkSync(req.file.path);
     }
+  }
+};
+
+exports.updateEventStatus = async (req, res, next) => {
+  try {
+    const value = req.body;
+
+    if (
+      value.status !== "SELL" &&
+      value.status !== "SOLD_OUT" &&
+      value.status !== "COMING_SOON"
+    ) {
+      createError(
+        "please update status in form 'SELL', 'SOLD_OUT' or 'COMING_SOON'",
+        400
+      );
+    }
+    const event = await Event.update(value, {
+      where: {
+        id: req.params.eventId,
+      },
+    });
+    res.status(200).json({ event });
+  } catch (err) {
+    next(err);
+  }
+};
+
+exports.updatePaymentStatus = async (req, res, next) => {
+  try {
+    const value = req.body;
+
+    if (
+      value.status !== "PENDING" &&
+      value.status !== "SUCCESS" &&
+      value.status !== "CANCELLED"
+    ) {
+      createError(
+        "please update status in form 'PENDING','SUCCESS' or 'CANCELLED",
+        400
+      );
+    }
+    const payment = await Payment.update(value, {
+      where: {
+        id: req.params.paymentId,
+      },
+    });
+    res.status(200).json({ payment });
+  } catch (err) {
+    next(err);
   }
 };

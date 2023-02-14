@@ -1,5 +1,6 @@
-const { Booking, Payment, Zone } = require("../models");
+const { Booking, Payment, Zone, Event } = require("../models");
 const createError = require("../utils/create-error.js");
+const { Op } = require("sequelize");
 
 exports.createBooking = async (req, res, next) => {
   // *** create both booking and payment ***
@@ -14,10 +15,10 @@ exports.createBooking = async (req, res, next) => {
     const zone = await Zone.update(
       { bookingId: booking.id },
       {
-        where: { id: req.params.zoneId },
+        where: { id: req.params.zoneId, bookingId: null },
       }
     );
-    // update booking id where zone id นั่นแหละ
+    // update booking id where zone id
 
     res.status(201).json({ booking, payment, zone });
   } catch (err) {
@@ -31,6 +32,9 @@ exports.getBooking = async (req, res, next) => {
       where: {
         id: req.params.bookingId,
       },
+      include: {
+        model: Zone,
+      },
     });
     res.status(200).json({ booking });
   } catch (err) {
@@ -40,10 +44,25 @@ exports.getBooking = async (req, res, next) => {
 
 exports.getAllBookingById = async (req, res, next) => {
   try {
+    //SELECT * FROM bookings
+    // LEFT JOIN payments
+    // ON bookings.id = payments.booking_id;
     const booking = await Booking.findAll({
       where: {
         userId: req.params.userId,
       },
+      include: [
+        {
+          model: Event,
+          attributes: {
+            exclude: ["status"],
+          },
+        },
+        {
+          model: Payment,
+          required: false,
+        },
+      ],
     });
     res.status(200).json({ booking });
   } catch (err) {

@@ -30,3 +30,38 @@ exports.getEventById = async (req, res, next) => {
     next(err);
   }
 };
+
+exports.getZone = async (req, res, next) => {
+  try {
+    const zone = await Zone.findAll({ where: { venueId: req.params.venueId } });
+    res.status(200).json({ zone });
+  } catch (err) {
+    next(err);
+  }
+};
+
+exports.getZoneById = async (req, res, next) => {
+  try {
+    const zone = await Zone.findOne({
+      where: {
+        id: req.params.zoneId,
+      },
+    });
+    res.status(200).json({ zone });
+  } catch (err) {
+    next(err);
+  }
+};
+
+exports.getZoneByName = async (req, res, next) => {
+  try {
+    const zone = await Zone.findAll({
+      where: {
+        zoneName: req.params.zoneName,
+      },
+    });
+    res.status(200).json({ zone });
+  } catch (err) {
+    next(err);
+  }
+};
