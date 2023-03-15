@@ -7,7 +7,7 @@ exports.createBooking = async (req, res, next) => {
   try {
     const value = req.body;
 
-    value.userId = req.params.userId;
+    value.userId = req.user.id;
     value.eventId = req.params.eventId;
 
     const booking = await Booking.create(value);
@@ -49,7 +49,7 @@ exports.getAllBookingById = async (req, res, next) => {
     // ON bookings.id = payments.booking_id;
     const booking = await Booking.findAll({
       where: {
-        userId: req.params.userId,
+        userId: req.user.id,
       },
       include: [
         {
